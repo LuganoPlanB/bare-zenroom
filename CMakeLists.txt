@@ -68,3 +68,15 @@ add_custom_command(
           "${ZENROOM_LIBRARY}"
           "${ZENROOM_RUNTIME_DIR}/${ZENROOM_RUNTIME_NAME}"
 )
+
+if(APPLE)
+  add_custom_command(
+    TARGET ${bare_addon}_module
+    POST_BUILD
+    COMMAND install_name_tool
+            -change
+            "libzenroom.dylib"
+            "@loader_path/bare-addon-zenroom/libzenroom.dylib"
+            "$<TARGET_FILE:${bare_addon}_module>"
+  )
+endif()
