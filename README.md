@@ -157,11 +157,22 @@ will be tightened later once the addon/native boundary is stable.
 
 ## Runtime dependency placement
 
-The addon now arranges for `libzenroom.so` to sit in the runtime
+The addon now arranges for the platform-specific Zenroom shared library
+to sit in the runtime
 directory already searched by the addon loader:
 
-- after `bare-make build`: `build/bare-addon-zenroom/libzenroom.so`
-- after `bare-make install --link`: `prebuilds/linux-x64/bare-addon-zenroom/libzenroom.so`
+- Linux: `libzenroom.so`
+- macOS: `libzenroom.dylib`
+- Windows: `zenroom.dll` with import library `libzenroom_dll.lib`
+
+Examples:
+
+- after `bare-make build` on Linux:
+  `build/bare-addon-zenroom/libzenroom.so`
+- after `bare-make build` on macOS:
+  `build/bare-addon-zenroom/libzenroom.dylib`
+- after `bare-make install --link` on Linux:
+  `prebuilds/linux-x64/bare-addon-zenroom/libzenroom.so`
 
 This removes the need for `LD_LIBRARY_PATH` during the normal local
 workflow.
