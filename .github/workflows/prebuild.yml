@@ -1,6 +1,8 @@
 name: Prebuild
 on:
   workflow_dispatch:
+env:
+  ZENROOM_GIT_URL: https://github.com/dyne/zenroom.git
 jobs:
   prebuild:
     strategy:
@@ -53,6 +55,14 @@ jobs:
     name: Build / ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
     steps:
       - uses: holepunchto/actions/bare-base@v1
+      - name: Clone Zenroom
+        shell: bash
+        run: |
+          if [ ! -d zenroom/.git ]; then
+            git clone "$ZENROOM_GIT_URL" zenroom
+          fi
+      - name: Build Zenroom
+        run: npm run zenroom:build
       - uses: holepunchto/actions/compile-prebuilds@v1
         with:
           platform: ${{ matrix.platform }}

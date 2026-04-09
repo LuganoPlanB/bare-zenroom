@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - main
+env:
+  ZENROOM_GIT_URL: https://github.com/dyne/zenroom.git
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -30,6 +32,14 @@ jobs:
     name: Test / ${{ matrix.platform }}-${{ matrix.arch }}
     steps:
       - uses: holepunchto/actions/bare-base@v1
+      - name: Clone Zenroom
+        shell: bash
+        run: |
+          if [ ! -d zenroom/.git ]; then
+            git clone "$ZENROOM_GIT_URL" zenroom
+          fi
+      - name: Build Zenroom
+        run: npm run zenroom:build
       - uses: holepunchto/actions/compile-prebuilds@v1
         with:
           platform: ${{ matrix.platform }}
