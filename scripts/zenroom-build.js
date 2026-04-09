@@ -49,7 +49,11 @@ function main() {
 
   const result = spawnSync('make', ['-C', zenroomDir, target], {
     stdio: 'inherit',
-    env: process.env
+    env: {
+      ...process.env,
+      CCACHE: '1',
+      RELEASE: '1'
+    }
   })
 
   if (typeof result.status === 'number') {
