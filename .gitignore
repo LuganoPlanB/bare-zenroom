@@ -1,4 +1,6 @@
 build/
 prebuilds/
 node_modules/
+coverage/
+zenroom/
 package-lock.json
