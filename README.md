@@ -1,6 +1,50 @@
-# bare-addon
+# bare-addon-zenroom
 
-Template repository for creating Bare native addons. For information on how to use the template, see [Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+Bare native addon for embedding Zenroom.
+
+This repository starts from the standard Bare native addon template and
+is being adapted gradually rather than reworked all at once.
+
+The current v0 target is intentionally small:
+
+- expose one execution-oriented API
+- map it onto Zenroom's public C API
+- keep the addon thin and explicit
+
+The first public JS boundary is:
+
+```js
+const zenroom = require('.')
+
+const result = zenroom.exec(script, {
+  conf,
+  keys,
+  data,
+  extra,
+  context
+})
+```
+
+The planned result shape is:
+
+```js
+{
+  exitCode: Number,
+  stdout: String,
+  stderr: String
+}
+```
+
+At the current stage the native binding exposes this contract as a
+placeholder while the actual Zenroom shared library integration is
+implemented.
+
+## Non-goals for v0
+
+- no direct hash or sign helper APIs yet
+- no async worker model yet
+- no streaming stdout/stderr yet
+- no full Zenroom source vendoring yet
 
 ## Building
 
@@ -42,6 +86,12 @@ bare-make install --link
 
 Prior to publishing the module, make sure that no links exist within the `prebuilds/` directory as these will not be included in the resulting package archive.
 
+## Local status
+
+This repository does not yet link against Zenroom. The next milestone is
+to build Zenroom as a shared library and call `zencode_exec_tobuf(...)`
+from the addon.
+
 ## Publishing
 
 To publish an addon, make sure to first compile bindings for the targets you wish to support. The prebuild workflow defined in [`.github/workflows/prebuild.yml`](.github/workflows/prebuild.yml) automates this process for all [tier 1 targets](https://github.com/holepunchto/bare#platform-support) supported by Bare. The whole process can be handily orchestrated by the [GitHub CLI](https://cli.github.com). As the package version is part of the compiled bindings, make sure to first commit and push a version update:
@@ -73,9 +123,14 @@ gh run download --name prebuilds --dir prebuilds
 > [!IMPORTANT]
 > You still need to manually run `npm pub` to publish the package to npm.
 
-## Dependencies
+## Native dependencies
 
-Addons are rarely self-contained and most often need to pull in external native libraries. For this, <https://github.com/holepunchto/cmake-fetch> should be used. Start by installing the package as a development dependency:
+Addons are rarely self-contained and most often need to pull in
+external native libraries. For this, <https://github.com/holepunchto/cmake-fetch>
+can be used when the addon starts importing third-party native build
+inputs from CMake.
+
+Install it as a development dependency:
 
 ```console
 npm i -D cmake-fetch
@@ -87,7 +142,10 @@ Next, import the package in the [`CMakeLists.txt`](CMakeLists.txt) build definit
 find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 ```
 
-This will make the `fetch_package()` function available. To fetch an external native library, such as <https://github.com/holepunchto/liburl>, add the following line _after_ the `project()` declaration in the build definition:
+This will make the `fetch_package()` function available. To fetch an
+external native library, such as <https://github.com/holepunchto/liburl>,
+add the following line _after_ the `project()` declaration in the build
+definition:
 
 ```cmake
 fetch_package("github:holepunchto/liburl")

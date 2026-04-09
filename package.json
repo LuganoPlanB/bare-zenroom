@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "bare-addon",
+  "name": "bare-addon-zenroom",
   "version": "1.0.0",
-  "description": "Example Bare addon",
+  "description": "Bare native addon for Zenroom",
   "exports": {
     "./package": "./package.json",
     ".": "./index.js"
@@ -20,16 +20,8 @@
     "lint": "prettier --check . && lunte",
     "test": "brittle-bare --coverage test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/holepunchto/bare-addon.git"
-  },
-  "author": "Holepunch",
+  "author": "jrml",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/holepunchto/bare-addon/issues"
-  },
-  "homepage": "https://github.com/holepunchto/bare-addon#readme",
   "devDependencies": {
     "brittle": "^3.4.0",
     "cmake-bare": "^1.1.2",
