@@ -35,9 +35,8 @@ The planned result shape is:
 }
 ```
 
-At the current stage the native binding exposes this contract as a
-placeholder while the actual Zenroom shared library integration is
-implemented.
+The local development path links the addon against a Zenroom shared
+library built from the sibling [`../zenroom`](../zenroom) repository.
 
 ## Non-goals for v0
 
@@ -88,9 +87,21 @@ Prior to publishing the module, make sure that no links exist within the `prebui
 
 ## Local status
 
-This repository does not yet link against Zenroom. The next milestone is
-to build Zenroom as a shared library and call `zencode_exec_tobuf(...)`
-from the addon.
+The addon is intended to call `zencode_exec_tobuf(...)` from Zenroom.
+For local development the expected flow is:
+
+```console
+cd ../zenroom
+make linux-lib
+
+cd ../bare-addon-zenroom
+bare-make generate
+bare-make build
+bare-make install --link
+```
+
+This is a local-first setup. Packaging and portable prebuild generation
+will be tightened later once the addon/native boundary is stable.
 
 ## Publishing
 
