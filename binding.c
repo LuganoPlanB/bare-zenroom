@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <utf.h>
-#include "../zenroom/src/zenroom.h"
+#include <zenroom.h>
 
 enum {
   bare_addon_stdout_capacity = 1024 * 1024,

@@ -16,6 +16,12 @@
   ],
   "addon": true,
   "scripts": {
+    "zenroom:build": "node scripts/zenroom-build.js",
+    "addon:generate": "bare-make generate",
+    "addon:build": "bare-make build",
+    "addon:install": "bare-make install --link",
+    "dev:prepare": "npm run zenroom:build && npm run addon:generate && npm run addon:build && npm run addon:install",
+    "dev:test": "npm run dev:prepare && npm test",
     "format": "prettier --write .",
     "lint": "prettier --check . && lunte",
     "test": "brittle-bare --coverage test.js"
@@ -28,5 +34,9 @@
     "lunte": "^1.3.0",
     "prettier": "^3.3.3",
     "prettier-config-holepunch": "^1.0.0"
+  },
+  "dependencies": {
+    "bare": "^1.28.4",
+    "bare-make": "^1.7.2"
   }
 }

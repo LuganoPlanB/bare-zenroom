@@ -36,7 +36,11 @@ The planned result shape is:
 ```
 
 The local development path links the addon against a Zenroom shared
-library built from the sibling [`../zenroom`](../zenroom) repository.
+library built from a plain local checkout in [`./zenroom`](./zenroom).
+
+`bare-make` itself is left untouched. The practical local workflow is
+integrated in this repository through npm scripts that build Zenroom
+first and then run the normal Bare addon steps.
 
 ## Non-goals for v0
 
@@ -88,20 +92,79 @@ Prior to publishing the module, make sure that no links exist within the `prebui
 ## Local status
 
 The addon is intended to call `zencode_exec_tobuf(...)` from Zenroom.
+The local Zenroom source is expected to live inside this repository,
+not as a submodule.
+
+Clone it with:
+
+```console
+git clone git@github.com:dyne/zenroom.git zenroom
+```
+
 For local development the expected flow is:
 
 ```console
-cd ../zenroom
+cd zenroom
 make linux-lib
 
-cd ../bare-addon-zenroom
 bare-make generate
 bare-make build
 bare-make install --link
 ```
 
+Equivalent repo-local wrappers are available:
+
+```console
+npm run zenroom:build
+npm run addon:generate
+npm run addon:build
+npm run addon:install
+```
+
+And the practical end-to-end commands are:
+
+```console
+npm run dev:prepare
+npm run dev:test
+```
+
+What they do:
+
+- `zenroom:build`: detects the host platform and selects the matching Zenroom library target
+- `dev:prepare`: builds Zenroom, generates the Bare build tree, builds the addon, and installs the prebuild link
+- `dev:test`: runs the full local preparation flow and then executes `npm test`
+
+Current platform mapping for `npm run zenroom:build`:
+
+- Linux: `linux-lib`
+- macOS: `osx-lib`
+- Windows: `win-dll`
+
+Architecture is detected and reported as part of the build context. For
+these three targets the Zenroom Make target is platform-specific rather
+than arch-specific, so the current mapping keys off the OS and lets the
+native toolchain handle the host architecture.
+
+If you need to force a different Zenroom Make target, set
+`ZENROOM_BUILD_TARGET`:
+
+```console
+ZENROOM_BUILD_TARGET=posix-lib npm run zenroom:build
+```
+
 This is a local-first setup. Packaging and portable prebuild generation
 will be tightened later once the addon/native boundary is stable.
+
+## Runtime dependency placement
+
+The addon now arranges for `libzenroom.so` to sit in the runtime
+directory already searched by the addon loader:
+
+- after `bare-make build`: `build/bare-addon-zenroom/libzenroom.so`
+- after `bare-make install --link`: `prebuilds/linux-x64/bare-addon-zenroom/libzenroom.so`
+
+This removes the need for `LD_LIBRARY_PATH` during the normal local
+workflow.
 
 ## Publishing
 
