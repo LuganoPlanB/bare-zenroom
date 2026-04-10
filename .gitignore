@@ -1,4 +1,5 @@
 build/
+build-*/
 prebuilds/
 node_modules/
 coverage/

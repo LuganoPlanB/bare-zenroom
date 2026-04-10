@@ -17,7 +17,7 @@
   "addon": true,
   "scripts": {
     "zenroom:build": "node scripts/zenroom-build.js",
-    "addon:generate": "bare-make generate",
+    "addon:generate": "node scripts/addon-generate.js",
     "addon:build": "bare-make build",
     "addon:install": "bare-make install --link",
     "dev:prepare": "npm run zenroom:build && npm run addon:generate && npm run addon:build && npm run addon:install",

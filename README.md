@@ -131,6 +131,7 @@ npm run dev:test
 What they do:
 
 - `zenroom:build`: detects the host platform and selects the matching Zenroom library target
+- `addon:generate`: uses the normal Bare toolchain on Unix targets and selects the MinGW toolchain on Windows
 - `dev:prepare`: builds Zenroom, generates the Bare build tree, builds the addon, and installs the prebuild link
 - `dev:test`: runs the full local preparation flow and then executes `npm test`
 
@@ -154,6 +155,10 @@ ZENROOM_BUILD_TARGET=posix-lib npm run zenroom:build
 
 This is a local-first setup. Packaging and portable prebuild generation
 will be tightened later once the addon/native boundary is stable.
+
+For Windows, the current CI and local addon generation path targets
+`win32-x64` using the MinGW toolchain. This matches Zenroom's own
+`win-dll` build target, which is currently x64-specific.
 
 ## Runtime dependency placement
 
