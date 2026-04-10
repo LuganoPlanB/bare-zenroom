@@ -48,13 +48,21 @@ jobs:
           - os: windows-2022
             platform: win32
             arch: x64
-          - os: windows-2022
-            platform: win32
-            arch: arm64
     runs-on: ${{ matrix.os }}
     name: Build / ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
     steps:
       - uses: holepunchto/actions/bare-base@v1
+      - uses: msys2/setup-msys2@v2
+        if: matrix.platform == 'win32' && matrix.arch == 'x64'
+        with:
+          release: false
+          update: true
+          install: >-
+            make
+            patch
+            diffutils
+            mingw-w64-x86_64-binutils
+            mingw-w64-x86_64-gcc
       - name: Clone Zenroom
         shell: bash
         run: |
@@ -70,6 +78,8 @@ jobs:
           flags: ${{ matrix.flags }}
           tags: ${{ matrix.tags}}
           upload: true
+        env:
+          BARE_MAKE_PLATFORM: ${{ matrix.platform == 'win32' && 'mingw' || '' }}
   merge:
     runs-on: ubuntu-latest
     needs: prebuild

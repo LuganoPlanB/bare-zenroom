@@ -25,14 +25,25 @@ jobs:
           - os: macos-latest
             platform: darwin
             arch: arm64
-          # - os: windows-latest
-          #   platform: win32
-          #   arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: x64
     runs-on: ${{ matrix.os }}
     name: Test / ${{ matrix.platform }}-${{ matrix.arch }}
     steps:
       - uses: holepunchto/actions/bare-base@v1
       - uses: hendrikmuhs/ccache-action@v1.2
+      - uses: msys2/setup-msys2@v2
+        if: matrix.platform == 'win32' && matrix.arch == 'x64'
+        with:
+          release: false
+          update: true
+          install: >-
+            make
+            patch
+            diffutils
+            mingw-w64-x86_64-binutils
+            mingw-w64-x86_64-gcc
       - name: Clone Zenroom
         shell: bash
         run: |
@@ -46,4 +57,6 @@ jobs:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
           flags: --debug
+        env:
+          BARE_MAKE_PLATFORM: ${{ matrix.platform == 'win32' && 'mingw' || '' }}
       - run: npm test
